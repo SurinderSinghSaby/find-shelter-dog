@@ -9,7 +9,7 @@ const useDogs = (
   selectedLocationZip: string,
   page: number,
   sortOption: SortOption,
-  pageSize = 9
+  pageSize = 12
 ) => {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [totalResults, setTotalResults] = useState(0);

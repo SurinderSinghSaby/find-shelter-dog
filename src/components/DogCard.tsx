@@ -29,16 +29,23 @@ const DogCard = ({
       onClick={onToggleFavorite}
       sx={{
         position: "relative",
-        border: isFavorite ? "2px solid #2196f3" : "1px solid #ccc",
+        borderRadius: 2,
+        boxShadow: isFavorite
+          ? "0 0 8px 2px rgba(33, 150, 243, 0.6)"
+          : "0 1px 4px rgba(0,0,0,0.1)",
         backgroundColor: isFavorite ? "#e3f2fd" : "white",
-        height: 250, // Fixed height
-        width: "100%",
+        cursor: "pointer",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        cursor: "pointer",
         overflow: "hidden",
+        transition: "box-shadow 0.3s ease",
+        height: 280,
+        "&:hover": {
+          boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+        },
       }}
+      elevation={isFavorite ? 8 : 1}
+      aria-label={`Dog card for ${name}`}
     >
       {/* Favorite Icon */}
       <Box sx={{ position: "absolute", top: 8, right: 8, zIndex: 2 }}>
@@ -48,35 +55,59 @@ const DogCard = ({
             e.stopPropagation();
             onToggleFavorite?.();
           }}
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           {isFavorite ? (
             <StarIcon sx={{ color: "#fbc02d" }} />
           ) : (
-            <StarBorderIcon sx={{ color: "#ccc" }} />
+            <StarBorderIcon sx={{ color: "#bbb" }} />
           )}
         </IconButton>
       </Box>
 
       {/* Image */}
-      <Box sx={{ height: 180, width: 250}}>
-        <CardMedia
-          component="img"
-          image={img || "/fallback-image.jpg"}
-          alt={name}
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover", // Crop image
-          }}
-        />
-      </Box>
+      <CardMedia
+        component="img"
+        image={img || "/fallback-image.jpg"}
+        alt={name}
+        sx={{
+          height: 160,
+          width: "100%",
+          objectFit: "cover",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          userSelect: "none",
+        }}
+        draggable={false}
+      />
 
       {/* Info */}
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" noWrap>
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          px: 2,
+          py: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h6"
+          noWrap
+          sx={{ fontWeight: 600, mb: 0.5, color: "#222" }}
+          title={name}
+        >
           {name}
         </Typography>
-        <Typography variant="body2" color="text.secondary" noWrap>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          noWrap
+          sx={{ fontStyle: "italic" }}
+          title={`${breed} — Age: ${age} — Zip: ${zip_code}`}
+        >
           {breed} — {age} — {zip_code}
         </Typography>
       </CardContent>
