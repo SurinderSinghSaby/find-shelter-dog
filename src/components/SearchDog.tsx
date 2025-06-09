@@ -25,7 +25,7 @@ const DogSearch = () => {
   const [page, setPage] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>('breed:asc');
 
-  const { dogs, totalResults, loading } = useDogs(selectedBreed, selectedLocationZip, page, sortOption, PAGE_SIZE, breeds);
+  const { dogs, totalResults, loading } = useDogs(selectedBreed, selectedLocationZip, page, sortOption, PAGE_SIZE);
   const [favorites, setFavorites] = useState<string[]>(() => {
     const stored = localStorage.getItem('favoriteDogs');
     return stored ? JSON.parse(stored) : [];

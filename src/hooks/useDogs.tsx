@@ -9,7 +9,7 @@ const useDogs = (
   page: number,
   sortOption: SortOption,
   pageSize = 8,
-  breeds: string[]
+
 ) => {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [totalResults, setTotalResults] = useState(0);
@@ -24,7 +24,7 @@ const useDogs = (
         const params: SearchDogsParams = {
           breeds: selectedBreed ? [selectedBreed] : undefined,
           zipCodes: selectedLocationZip ? [selectedLocationZip] : undefined,
-          //size: ,
+          size: pageSize,
           //from: (page - 1) * pageSize,
           sort: sortOption
         };
