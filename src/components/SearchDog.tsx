@@ -17,30 +17,28 @@ import {
   Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import type { Dog, Location, Match, SearchDogsParams } from '../interfaces/interfaces';
-import { fetchDogsByIds, matchDogs, searchDogs } from '../services/dogsApi';
-import { fetchLocations } from '../services/locationApi';
 import DogCard from './DogCard';
 
 import useBreeds from '../hooks/useBreeds';
+import useDogs from '../hooks/useDogs';
+import useLocations from '../hooks/useLocations';
+import useMatch from '../hooks/useMatch';
 import useWindowSize from '../hooks/useWindows';
   
   const PAGE_SIZE = 9;
 
   
-  type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc' | 'zip-asc' | 'zip-desc';
+  type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc';
   
 
   const DogSearch = () => {
     const breeds = useBreeds();
-    const [locations, setLocations] = useState<Location[]>([]);
     const [selectedBreed, setSelectedBreed] = useState<string>('');
+    const { locations } = useLocations(selectedBreed);
     const [selectedLocationZip, setSelectedLocationZip] = useState<string>('');
-    const [dogs, setDogs] = useState<Dog[]>([]);
-    const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [totalResults, setTotalResults] = useState(0);
     const [sortOption, setSortOption] = useState<SortOption>('breed-asc');
+    const { dogs, totalResults, loading } = useDogs(selectedBreed, selectedLocationZip, page, sortOption);
     const [favorites, setFavorites] = useState<string[]>(() => {
       const stored = localStorage.getItem('favoriteDogs');
       return stored ? JSON.parse(stored) : [];
@@ -48,9 +46,13 @@ import useWindowSize from '../hooks/useWindows';
     const [viewFavoritesOnly, setViewFavoritesOnly] = useState(false);
 
 
-    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
-    const [showCelebration, setShowCelebration] = useState(false);
-    const [showMatchView, setShowMatchView] = useState(false);
+    const {
+      matchedDog,
+      showCelebration,
+      showMatchView,
+      handleMatch,
+      setShowMatchView
+    } = useMatch();
 
     const { width, height } = useWindowSize();
   
@@ -58,154 +60,13 @@ import useWindowSize from '../hooks/useWindows';
     useEffect(() => {
       localStorage.setItem('favoriteDogs', JSON.stringify(favorites));
     }, [favorites]);
-  
-    useEffect(() => {
-        const loadLocations = async () => {
-          setLoading(true);
-          try {
-            if (!selectedBreed) {
-              setLocations([]);
-              return;
-            }
-      
-            const allResultIds: string[] = [];
-            let from = 0;
-            const pageSize = 100;
-            let total = 0;
-      
-            // 1. Paginate through ALL dogs with selected breed
-            do {
-              const searchResult = await searchDogs({
-                breeds: [selectedBreed],
-                from,
-                size: pageSize,
-              });
-      
-              if (searchResult.resultIds.length === 0) break;
-      
-              allResultIds.push(...searchResult.resultIds);
-              total = searchResult.total || allResultIds.length;
-              from += pageSize;
-            } while (from < total);
-      
-            // 2. Fetch dogs in batches of 100
-            const chunks: string[][] = [];
-            for (let i = 0; i < allResultIds.length; i += 100) {
-              chunks.push(allResultIds.slice(i, i + 100));
-            }
-      
-            const allDogsArrays = await Promise.all(chunks.map(fetchDogsByIds));
-            const allDogs = allDogsArrays.flat();
-      
-            // 3. Get unique zip codes
-            const uniqueZips = Array.from(new Set(
-              allDogs
-                .map(dog => dog.zip_code)
-                .filter((zip): zip is string => typeof zip === 'string' && zip.trim() !== '')
-            ));
-      
-            // 4. Fetch location info using those zips
-            const locationChunks: string[][] = [];
-            for (let i = 0; i < uniqueZips.length; i += 100) {
-              locationChunks.push(uniqueZips.slice(i, i + 100));
-            }
-      
-            const locationResultsArrays = await Promise.all(
-              locationChunks.map(chunk => fetchLocations(chunk))
-            );
-      
-            const allLocations = locationResultsArrays.flat();
-      
-            // 5. Remove invalid and sort by city
-            const sortedLocations = allLocations
-              .filter(loc => loc && loc.zip_code && loc.city)
-              .sort((a, b) => a.city.localeCompare(b.city));
-      
-            setLocations(sortedLocations);
-          } catch (err) {
-            console.error('Failed to load locations', err);
-            setLocations([]);
-          } finally {
-            setLoading(false);
-          }
-        };
-      
-        loadLocations();
-      }, [selectedBreed]);
-      
-  
-    useEffect(() => {
-      const fetchDogsData = async () => {
-        setLoading(true);
-        try {
-          const searchParams: SearchDogsParams = {
-            breeds: selectedBreed ? [selectedBreed] : undefined,
-            zipCodes: selectedLocationZip ? [selectedLocationZip] : undefined,
-            size: PAGE_SIZE,
-            from: (page - 1) * PAGE_SIZE,
-          };
-          const searchResult = await searchDogs(searchParams);
-
-          
-          setTotalResults(searchResult.total || 0);
-          if (searchResult.resultIds.length > 0) {
-            let dogDetails = await fetchDogsByIds(searchResult.resultIds);
-            dogDetails = dogDetails.sort((a, b) => {
-                console.log(sortOption)
-              switch (sortOption) {
-                case 'name-asc': return a.name.localeCompare(b.name);
-                case 'name-desc': return b.name.localeCompare(a.name);
-                case 'breed-asc': return a.breed.localeCompare(b.breed);
-                case 'breed-desc': return b.breed.localeCompare(a.breed);
-                default: return 0;
-              }
-            });
-          
-            setDogs(dogDetails);
-          } else {
-            setDogs([]);
-          }
-        } catch (err) {
-          console.error('Search failed', err);
-          setDogs([]);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchDogsData();
-    }, [selectedBreed, selectedLocationZip, page, sortOption]);
+     
   
     const toggleFavorite = (dogId: string) => {
       setFavorites(prev => prev.includes(dogId) ? prev.filter(id => id !== dogId) : [...prev, dogId]);
     };
   
-    const handleMatch = async () => {
-      if (favorites.length === 0) return;
-      try {
-        const matchResponse: Match = await matchDogs(favorites); // this returns { match: "dog_id" }
-        const matchedDogId = matchResponse.match;
 
-
-        const matchedDogD = await fetchDogsByIds([matchedDogId]);
-   
-        if (matchedDogD.length > 0) {
-            setMatchedDog(matchedDogD[0]);
-            setShowCelebration(true);
-      
-            // After 3 seconds, stop celebration & show matched dog view
-            setTimeout(() => {
-              setShowCelebration(false);
-              setShowMatchView(true);
-            }, 3000);
-          }
-
-      } catch (err) {
-        console.error('Failed to match dog', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     const displayedDogs = viewFavoritesOnly
     ? dogs.filter(d => favorites.includes(d.id))
     : dogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -251,7 +112,7 @@ import useWindowSize from '../hooks/useWindows';
             {viewFavoritesOnly ? 'View All Dogs' : 'View Favorites'}
           </Button>
   
-          <Button variant="contained" color="primary" onClick={handleMatch} disabled={favorites.length === 0}>
+          <Button variant="contained" color="primary" onClick={() => handleMatch(favorites)} disabled={favorites.length === 0}>
             Get Match
           </Button>
         </Box>
