@@ -25,7 +25,7 @@ import useLocations from '../hooks/useLocations';
 import useMatch from '../hooks/useMatch';
 import useWindowSize from '../hooks/useWindows';
   
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 8;
 
 type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc';
 

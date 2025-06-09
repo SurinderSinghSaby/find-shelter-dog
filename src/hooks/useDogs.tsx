@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchDogsByIds, searchDogs } from '../services/dogsApi';
 import type { Dog, SearchDogsParams } from '../interfaces/interfaces';
+import { fetchDogsByIds, searchDogs } from '../services/dogsApi';
 
 type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc';
 
@@ -9,7 +9,7 @@ const useDogs = (
   selectedLocationZip: string,
   page: number,
   sortOption: SortOption,
-  pageSize = 12
+  pageSize = 8
 ) => {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [totalResults, setTotalResults] = useState(0);
