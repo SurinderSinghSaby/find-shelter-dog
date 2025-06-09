@@ -23,7 +23,7 @@ import { fetchLocations } from '../services/locationApi';
 import DogCard from './DogCard';
   
   const PAGE_SIZE = 9;
-  const MAX_DOG_SEARCH = 100;
+
   
   type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc' | 'zip-asc' | 'zip-desc';
   
