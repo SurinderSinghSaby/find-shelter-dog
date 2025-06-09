@@ -1,20 +1,20 @@
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Confetti from 'react-confetti';
 
+import Grid from '@mui/material/Grid';
 
 import {
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Paper,
-    Select,
-    Typography
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { Dog, Location, Match, SearchDogsParams } from '../interfaces/interfaces';
@@ -340,7 +340,7 @@ import DogCard from './DogCard';
           < >
             <Grid container spacing={3} justifyContent="center">
               {displayedDogs.map(dog => (
-                <Grid key={dog.id} item xs={12} sm={6} md={4} lg={3}>
+                <Grid key={dog.id} size={{ xs: 12, sm: 6, md: 4, lg:3}}>
                   <Paper elevation={3} sx={{ p: 2, position: 'relative' }}>
                     <DogCard {...dog} isFavorite={favorites.includes(dog.id)} onToggleFavorite={() => toggleFavorite(dog.id)} />
                     <IconButton
