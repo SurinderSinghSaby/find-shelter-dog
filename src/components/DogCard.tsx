@@ -1,13 +1,13 @@
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Box,
-  IconButton,
-} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import type { Dog } from "../interfaces/interfaces";
 
 interface Props extends Dog {
@@ -104,12 +104,19 @@ const DogCard = ({
         <Typography
           variant="body2"
           color="text.secondary"
-          noWrap
           sx={{ fontStyle: "italic" }}
           title={`${breed} — Age: ${age} — Zip: ${zip_code}`}
         >
-          {breed} — {age} — {zip_code}
+          <Typography component="span" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+            {breed}
+          </Typography>
+          <br />
+          <Typography component="span" sx={{ color: 'text.secondary' }}>Age: </Typography>
+          <Typography component="span" sx={{ color: 'success.main' }}>{age}</Typography>
+          <Typography component="span" sx={{ color: 'text.secondary' }}> — Zip: </Typography>
+          <Typography component="span" sx={{ color: 'info.main' }}>{zip_code}</Typography>
         </Typography>
+
       </CardContent>
     </Card>
   );
