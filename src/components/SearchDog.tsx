@@ -67,9 +67,10 @@ import useWindowSize from '../hooks/useWindows';
     };
   
 
-    const displayedDogs = viewFavoritesOnly
+      const displayedDogs = viewFavoritesOnly
     ? dogs.filter(d => favorites.includes(d.id))
-    : dogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    : dogs;
+
 
     const totalPages = Math.ceil(totalResults / PAGE_SIZE);
   
