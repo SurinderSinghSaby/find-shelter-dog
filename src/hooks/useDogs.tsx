@@ -25,7 +25,7 @@ const useDogs = (
           breeds: selectedBreed ? [selectedBreed] : undefined,
           zipCodes: selectedLocationZip ? [selectedLocationZip] : undefined,
           size: pageSize,
-          //from: (page - 1) * pageSize,
+          from: (page - 1) * pageSize,
           sort: sortOption
         };
         
