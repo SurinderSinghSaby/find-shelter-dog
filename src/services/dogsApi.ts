@@ -27,7 +27,7 @@ export const fetchBreeds = async (): Promise<string[]> => {
   }
 
 
-  
+  // Max can be 10000
   export const searchDogs = async (params: SearchDogsParams): Promise<SearchDogsResponse> => {
     const response = await api.get<SearchDogsResponse>('/dogs/search', { params });
     return response.data;

@@ -34,4 +34,6 @@ export interface SearchDogsParams {
 export interface Match{
     match: string;
 }
+
+export type SortOption = 'name:asc' | 'name:desc' | 'breed:asc' | 'breed:desc' | 'age:asc' | 'age:desc';
   

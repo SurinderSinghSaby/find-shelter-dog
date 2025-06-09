@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc';
+import type { SortOption } from '../interfaces/interfaces';
 
 interface LocationType {
   city: string;
@@ -75,10 +75,12 @@ const FilterControls = ({
         onChange={e => onSelectSort(e.target.value as SortOption)}
         label="Sort By"
       >
-        <MenuItem value="name-asc">Name: A to Z</MenuItem>
-        <MenuItem value="name-desc">Name: Z to A</MenuItem>
-        <MenuItem value="breed-asc">Breed: A to Z</MenuItem>
-        <MenuItem value="breed-desc">Breed: Z to A</MenuItem>
+        <MenuItem value="name:asc">Name: A to Z</MenuItem>
+        <MenuItem value="name:desc">Name: Z to A</MenuItem>
+        <MenuItem value="breed:asc">Breed: A to Z</MenuItem>
+        <MenuItem value="breed:desc">Breed: Z to A</MenuItem>
+        <MenuItem value="age:asc">Age: A to Z</MenuItem>
+        <MenuItem value="age:desc">Age: Z to A</MenuItem>
       </Select>
     </FormControl>
 

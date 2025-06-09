@@ -1,5 +1,6 @@
 import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import type { SortOption } from '../interfaces/interfaces';
 
 import CelebrationOverlay from './CelebrationOverlay';
 import DogsGrid from './DogsGrid';
@@ -15,7 +16,6 @@ import useWindowSize from '../hooks/useWindows';
 
 const PAGE_SIZE = 8;
 
-type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc';
 
 const DogSearch = () => {
   const breeds = useBreeds();
@@ -23,8 +23,9 @@ const DogSearch = () => {
   const { locations } = useLocations(selectedBreed);
   const [selectedLocationZip, setSelectedLocationZip] = useState<string>('');
   const [page, setPage] = useState(1);
-  const [sortOption, setSortOption] = useState<SortOption>('breed-asc');
-  const { dogs, totalResults, loading } = useDogs(selectedBreed, selectedLocationZip, page, sortOption);
+  const [sortOption, setSortOption] = useState<SortOption>('breed:asc');
+
+  const { dogs, totalResults, loading } = useDogs(selectedBreed, selectedLocationZip, page, sortOption, PAGE_SIZE, breeds);
   const [favorites, setFavorites] = useState<string[]>(() => {
     const stored = localStorage.getItem('favoriteDogs');
     return stored ? JSON.parse(stored) : [];
