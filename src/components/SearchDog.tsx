@@ -18,9 +18,12 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { Dog, Location, Match, SearchDogsParams } from '../interfaces/interfaces';
-import { fetchBreeds, fetchDogsByIds, matchDogs, searchDogs } from '../services/dogsApi';
+import { fetchDogsByIds, matchDogs, searchDogs } from '../services/dogsApi';
 import { fetchLocations } from '../services/locationApi';
 import DogCard from './DogCard';
+
+import useBreeds from '../hooks/useBreeds';
+import useWindowSize from '../hooks/useWindows';
   
   const PAGE_SIZE = 9;
 
@@ -28,22 +31,8 @@ import DogCard from './DogCard';
   type SortOption = 'name-asc' | 'name-desc' | 'breed-asc' | 'breed-desc' | 'zip-asc' | 'zip-desc';
   
 
-  const useWindowSize  = () => {
-    const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-  
-    useEffect(() => {
-      function handleResize() {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      }
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-  
-    return windowSize;
-  }
-
   const DogSearch = () => {
-    const [breeds, setBreeds] = useState<string[]>([]);
+    const breeds = useBreeds();
     const [locations, setLocations] = useState<Location[]>([]);
     const [selectedBreed, setSelectedBreed] = useState<string>('');
     const [selectedLocationZip, setSelectedLocationZip] = useState<string>('');
@@ -65,16 +54,6 @@ import DogCard from './DogCard';
 
     const { width, height } = useWindowSize();
   
-    useEffect(() => {
-      (async () => {
-        try {
-          const data = await fetchBreeds();
-          setBreeds(data);
-        } catch {
-          console.error('Failed to load breeds');
-        }
-      })();
-    }, []);
   
     useEffect(() => {
       localStorage.setItem('favoriteDogs', JSON.stringify(favorites));
